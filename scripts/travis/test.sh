@@ -43,7 +43,7 @@ for i in `seq 1 100`; do
   if [ $RESULT -ne 0 ]; then
     # Dump out stream manager log
     echo "DUMPING STMGR LOG"
-    tail -n +1 ~/.herondata/topologies/local/*/*MultiSpoutsMultiTasks*/log-files/*stmgr*.INFO
+    tail -n +1 ~/.herondata/topologies/local/*/*MultiSpoutsMultiTasks*/log-files/heron-stmgr-*.INFO*
     # Dump out Java program's logs
     echo "DUMPING JAVA PROGRAM LOG"
     tail -n +1 ~/.herondata/topologies/local/*/*MultiSpoutsMultiTasks*/log-files/container*.log.0
