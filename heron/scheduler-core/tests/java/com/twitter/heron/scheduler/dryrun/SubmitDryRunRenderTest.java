@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.twitter.heron.api.generated.TopologyAPI;
 import com.twitter.heron.common.basics.Pair;
 import com.twitter.heron.spi.common.Config;
-import com.twitter.heron.spi.common.ConfigKeys;
+import com.twitter.heron.spi.common.Key;
 import com.twitter.heron.spi.packing.PackingPlan;
 import com.twitter.heron.spi.utils.PackingTestUtils;
 
@@ -62,20 +63,30 @@ public class SubmitDryRunRenderTest {
     plan = new PackingPlan("A", containerPlans);
   }
 
-  @Test
-  public void testTableA() throws IOException {
-    InputStream stream  = UpdateDryRunRenderTest.class.
-        getResourceAsStream("/heron/scheduler-core/tests/resources/SubmitDryRunOutputATable.txt");
+  private void test(String filename, boolean rich) throws IOException {
+    InputStream stream  = SubmitDryRunRenderTest.class.
+        getResourceAsStream(filename);
     if (stream == null) {
       throw new RuntimeException("Sample output file not found");
     }
     // Input might contain UTF-8 character, so we read stream with UTF-8 decoding
     String exampleTable = IOUtils.toString(stream, StandardCharsets.UTF_8);
     TopologyAPI.Topology topology = PowerMockito.mock(TopologyAPI.Topology.class);
-    Config config = Config.newBuilder().put(ConfigKeys.get("PACKING_CLASS"),
+    Config config = Config.newBuilder().put(Key.PACKING_CLASS,
         "com.twitter.heron.packing.roundrobin.RoundRobinPacking").build();
     String table =
-        new SubmitTableDryRunRenderer(new SubmitDryRunResponse(topology, config, plan)).render();
+        new SubmitTableDryRunRenderer(
+            new SubmitDryRunResponse(topology, config, plan), rich).render();
     assertEquals(exampleTable, table);
+  }
+
+  @Test
+  public void testTableA() throws IOException {
+    test("/heron/scheduler-core/tests/resources/SubmitDryRunOutputATable.txt", true);
+  }
+
+  @Test
+  public void testTableANonRich() throws IOException {
+    test("/heron/scheduler-core/tests/resources/SubmitDryRunOutputATableNonRich.txt", false);
   }
 }

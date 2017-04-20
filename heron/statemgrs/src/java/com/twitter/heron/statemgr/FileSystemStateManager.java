@@ -30,7 +30,7 @@ import com.twitter.heron.proto.system.PhysicalPlans;
 import com.twitter.heron.proto.tmaster.TopologyMaster;
 import com.twitter.heron.spi.common.Config;
 import com.twitter.heron.spi.common.Context;
-import com.twitter.heron.spi.common.Keys;
+import com.twitter.heron.spi.common.Key;
 import com.twitter.heron.spi.statemgr.IStateManager;
 import com.twitter.heron.spi.statemgr.Lock;
 import com.twitter.heron.spi.statemgr.WatchCallback;
@@ -43,6 +43,7 @@ public abstract class FileSystemStateManager implements IStateManager {
 
   protected enum StateLocation {
     TMASTER_LOCATION("tmasters", "TMaster location"),
+    METRICSCACHE_LOCATION("metricscaches", "MetricsCache location"),
     TOPOLOGY("topologies", "Topologies"),
     PACKING_PLAN("packingplans", "Packing plan"),
     PHYSICAL_PLAN("pplans", "Physical plan"),
@@ -115,6 +116,11 @@ public abstract class FileSystemStateManager implements IStateManager {
   }
 
   @Override
+  public ListenableFuture<Boolean> deleteMetricsCacheLocation(String topologyName) {
+    return deleteNode(StateLocation.METRICSCACHE_LOCATION, topologyName);
+  }
+
+  @Override
   public ListenableFuture<Boolean> deleteSchedulerLocation(String topologyName) {
     return deleteNode(StateLocation.SCHEDULER_LOCATION, topologyName);
   }
@@ -182,6 +188,13 @@ public abstract class FileSystemStateManager implements IStateManager {
   }
 
   @Override
+  public ListenableFuture<TopologyMaster.MetricsCacheLocation> getMetricsCacheLocation(
+      WatchCallback watcher, String topologyName) {
+    return getNodeData(watcher, StateLocation.METRICSCACHE_LOCATION, topologyName,
+        TopologyMaster.MetricsCacheLocation.newBuilder());
+  }
+
+  @Override
   public ListenableFuture<Boolean> isTopologyRunning(String topologyName) {
     return nodeExists(getStatePath(StateLocation.TOPOLOGY, topologyName));
   }
@@ -242,7 +255,8 @@ public abstract class FileSystemStateManager implements IStateManager {
     }
 
     String topologyName = args[0];
-    print("==> State Manager root path: %s", config.get(Keys.stateManagerRootPath()));
+    print("==> State Manager root path: %s",
+        config.getStringValue(Key.STATEMGR_ROOT_PATH));
 
     initialize(config);
 
@@ -253,11 +267,12 @@ public abstract class FileSystemStateManager implements IStateManager {
       print("==> SchedulerLocation:\n%s",
           getSchedulerLocation(null, topologyName).get());
       print("==> TMasterLocation:\n%s", getTMasterLocation(null, topologyName).get());
+      print("==> MetricsCacheLocation:\n%s", getMetricsCacheLocation(null, topologyName).get());
       print("==> PackingPlan:\n%s", getPackingPlan(null, topologyName).get());
       print("==> PhysicalPlan:\n%s", getPhysicalPlan(null, topologyName).get());
     } else {
       print("==> Topology %s not found under %s",
-          topologyName, config.get(Keys.stateManagerRootPath()));
+          topologyName, config.getStringValue(Key.STATEMGR_ROOT_PATH));
     }
   }
 

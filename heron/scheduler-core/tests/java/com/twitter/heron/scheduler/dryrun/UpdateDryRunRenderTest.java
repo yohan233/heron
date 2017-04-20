@@ -32,7 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.twitter.heron.api.generated.TopologyAPI;
 import com.twitter.heron.common.basics.Pair;
 import com.twitter.heron.spi.common.Config;
-import com.twitter.heron.spi.common.ConfigKeys;
+import com.twitter.heron.spi.common.Key;
 import com.twitter.heron.spi.packing.PackingPlan;
 import com.twitter.heron.spi.utils.PackingTestUtils;
 
@@ -88,40 +88,46 @@ public class UpdateDryRunRenderTest {
     newPlanB = new PackingPlan("B", containerPlansB);
   }
 
-  @Test
-  public void testTableA() throws IOException {
+  private void test(String filename, PackingPlan newPlan, boolean rich) throws IOException {
     InputStream stream  = UpdateDryRunRenderTest.class.
-        getResourceAsStream("/heron/scheduler-core/tests/resources/UpdateDryRunOutputATable.txt");
+        getResourceAsStream(filename);
     if (stream == null) {
       throw new RuntimeException("Sample output file not found");
     }
     // Input might contain UTF-8 character, so we read stream with UTF-8 decoding
     String exampleTable = IOUtils.toString(stream, StandardCharsets.UTF_8);
     TopologyAPI.Topology topology = PowerMockito.mock(TopologyAPI.Topology.class);
-    Config config = Config.newBuilder().put(ConfigKeys.get("REPACKING_CLASS"),
+    Config config = Config.newBuilder().put(Key.REPACKING_CLASS,
         "com.twitter.heron.packing.binpacking.FirstFitDecreasingPacking").build();
     UpdateDryRunResponse resp = new UpdateDryRunResponse(
-        topology, config, newPlanA, originalPlan, new HashMap<String, Integer>());
+        topology, config, newPlan, originalPlan, new HashMap<String, Integer>());
     String table =
-        new UpdateTableDryRunRenderer(resp).render();
+        new UpdateTableDryRunRenderer(resp, rich).render();
     assertEquals(exampleTable, table);
   }
 
-  @Test public void testTableB() throws IOException {
-    InputStream stream  = UpdateDryRunRenderTest.class.
-        getResourceAsStream("/heron/scheduler-core/tests/resources/UpdateDryRunOutputBTable.txt");
-    if (stream == null) {
-      throw new RuntimeException("Sample output file not found");
-    }
-    // Input might contain UTF-8 character, so we read stream with UTF-8 decoding
-    String exampleTable = IOUtils.toString(stream, StandardCharsets.UTF_8);
-    TopologyAPI.Topology topology = PowerMockito.mock(TopologyAPI.Topology.class);
-    Config config = Config.newBuilder().put(ConfigKeys.get("REPACKING_CLASS"),
-        "com.twitter.heron.packing.binpacking.FirstFitDecreasingPacking").build();
-    UpdateDryRunResponse resp = new UpdateDryRunResponse(
-        topology, config, newPlanB, originalPlan, new HashMap<String, Integer>());
-    String table =
-        new UpdateTableDryRunRenderer(resp).render();
-    assertEquals(exampleTable, table);
+
+  @Test
+  public void testTableA() throws IOException {
+    test("/heron/scheduler-core/tests/resources/UpdateDryRunOutputATable.txt",
+        newPlanA, true);
+  }
+
+  @Test
+  public void testTableANonRich() throws IOException {
+    test("/heron/scheduler-core/tests/resources/UpdateDryRunOutputATableNonRich.txt",
+        newPlanA, false);
+  }
+
+  @Test
+  public void testTableB() throws IOException {
+    test("/heron/scheduler-core/tests/resources/UpdateDryRunOutputBTable.txt",
+        newPlanB, true);
+  }
+
+  @Test
+  public void testTableBNonRich() throws IOException {
+    test("/heron/scheduler-core/tests/resources/UpdateDryRunOutputBTableNonRich.txt",
+        newPlanB, false);
   }
 }
