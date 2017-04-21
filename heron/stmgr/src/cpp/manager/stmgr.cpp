@@ -560,6 +560,8 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
     for (sp_int32 j = 0; j < ack_tuple.roots_size(); ++j) {
       CHECK_EQ(_task_id, ack_tuple.roots(j).taskid());
       CHECK(!xor_mgrs_->anchor(_task_id, ack_tuple.roots(j).key(), ack_tuple.ackedtuple()));
+      LOG(INFO) << "xor emit: task id " << _task_id << "; root.key " << ack_tuple.roots(j).key()
+          << "; ackedtuple " << ack_tuple.ackedtuple();
     }
   }
 
@@ -577,6 +579,7 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
         r->set_taskid(_task_id);
         a->set_ackedtuple(0);  // this is ignored
         CHECK(xor_mgrs_->remove(_task_id, ack_tuple.roots(j).key()));
+        LOG(INFO) << "xor ack: task id " << _task_id << "; root.key " << ack_tuple.roots(j).key();
       }
     }
   }
@@ -594,6 +597,8 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
         r->set_key(fail_tuple.roots(j).key());
         r->set_taskid(_task_id);
         f->set_ackedtuple(0);  // this is ignored
+        LOG(INFO) << "xor fail: task id " << _task_id
+            << "; root.key " << fail_tuple.roots(j).key();
       }
     }
   }
