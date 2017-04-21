@@ -540,8 +540,12 @@ void StMgr::HandleStreamManagerData(const sp_string&,
 }
 
 void StMgr::SendInBound(sp_int32 _task_id, proto::system::HeronTupleSet2* _message) {
+  LOG(INFO) << "Dumping tuple (stmgr->instance) [HeronTupleSet2][SendInBound]:" << std::endl
+        << _message->DebugString() << std::endl;
   if (_message->has_data()) {
     server_->SendToInstance2(_task_id, *_message);
+    LOG(INFO) << "Dumping tuple (stmgr->instance) [HeronTupleSet2][SendInBound.has_data]:"
+        << std::endl << _message->DebugString() << std::endl;
   }
   if (_message->has_control()) {
     // We got a bunch of acks/fails
@@ -560,8 +564,9 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
     for (sp_int32 j = 0; j < ack_tuple.roots_size(); ++j) {
       CHECK_EQ(_task_id, ack_tuple.roots(j).taskid());
       CHECK(!xor_mgrs_->anchor(_task_id, ack_tuple.roots(j).key(), ack_tuple.ackedtuple()));
-      LOG(INFO) << "xor emit: task id " << _task_id << "; root.key " << ack_tuple.roots(j).key()
-          << "; ackedtuple " << ack_tuple.ackedtuple();
+      LOG(INFO) << "xor emit (stmgr->instance) anchor: task id " << _task_id
+          << "; root.key " << ack_tuple.roots(j).key()
+          << "; value/ackedtuple " << ack_tuple.ackedtuple();
     }
   }
 
@@ -579,7 +584,13 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
         r->set_taskid(_task_id);
         a->set_ackedtuple(0);  // this is ignored
         CHECK(xor_mgrs_->remove(_task_id, ack_tuple.roots(j).key()));
-        LOG(INFO) << "xor ack: task id " << _task_id << "; root.key " << ack_tuple.roots(j).key();
+        LOG(INFO) << "xor ack (stmgr->instance) anchor+remove [if]: task id " << _task_id
+            << "; root.key " << ack_tuple.roots(j).key()
+            << "; value/ackedtuple " << ack_tuple.ackedtuple();
+      } else {
+        LOG(INFO) << "xor ack (stmgr->instance) anchor [else]: task id " << _task_id
+                    << "; root.key " << ack_tuple.roots(j).key()
+                    << "; value/ackedtuple " << ack_tuple.ackedtuple();
       }
     }
   }
@@ -597,7 +608,7 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
         r->set_key(fail_tuple.roots(j).key());
         r->set_taskid(_task_id);
         f->set_ackedtuple(0);  // this is ignored
-        LOG(INFO) << "xor fail: task id " << _task_id
+        LOG(INFO) << "xor fail (stmgr->instance) remove: task id " << _task_id
             << "; root.key " << fail_tuple.roots(j).key();
       }
     }
@@ -606,6 +617,11 @@ void StMgr::ProcessAcksAndFails(sp_int32 _task_id,
   // Check if we need to send this out
   if (current_control_tuple_set_.has_control()) {
     server_->SendToInstance2(_task_id, current_control_tuple_set_);
+    LOG(INFO) << "Dumping tuple (stmgr->instance) [HeronTupleSet2][SendInBound.has_control]:"
+        << std::endl << current_control_tuple_set_.DebugString() << std::endl;
+  } else {
+    LOG(INFO) << "Dumping tuple (stmgr->instance) [HeronTupleSet2][SendInBound.has_control.else]:"
+            << std::endl << current_control_tuple_set_.DebugString() << std::endl;
   }
 }
 
@@ -697,8 +713,14 @@ void StMgr::CopyDataOutBound(sp_int32 _src_task_id, bool _local_spout,
         CHECK_EQ(_tuple->roots_size(), 1);
         if (first_iteration) {
           xor_mgrs_->create(_src_task_id, _tuple->roots(0).key(), tuple_key);
+          LOG(INFO) << "xor create (instance->stmgr): _src_task_id " << _src_task_id
+              << "; root.key " << _tuple->roots(0).key()
+              << "; value/tuple_key " << tuple_key;
         } else {
           CHECK(!xor_mgrs_->anchor(_src_task_id, _tuple->roots(0).key(), tuple_key));
+          LOG(INFO) << "xor anchor (instance->stmgr): _src_task_id " << _src_task_id
+              << "; root.key " << _tuple->roots(0).key()
+              << "; value/tuple_key " << tuple_key;
         }
       } else {
         // Anchored emits from local bolt
