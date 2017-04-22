@@ -400,8 +400,10 @@ void StMgrServer::HandleTupleSetMessage(Connection* _conn,
     stmgr_server_metrics_->scope(METRIC_FAIL_TUPLES_FROM_INSTANCES)
         ->incr_by(_message->control().fails_size());
   }
+  LOG(INFO) << "Dumping tuple (instance->stmgr) [HeronTupleSet.1]:" << std::endl
+      << _message->DebugString() << std::endl;
   stmgr_->HandleInstanceData(iter->second, instance_info_[iter->second]->local_spout_, _message);
-  LOG(INFO) << "Dumping tuple (instance->stmgr) [HeronTupleSet]:" << std::endl
+  LOG(INFO) << "Dumping tuple (instance->stmgr) [HeronTupleSet.2]:" << std::endl
       << _message->DebugString() << std::endl;
   release(_message);
 }

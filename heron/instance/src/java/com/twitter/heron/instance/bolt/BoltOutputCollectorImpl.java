@@ -119,6 +119,7 @@ public class BoltOutputCollectorImpl implements IOutputCollector {
   @Override
   public void ack(Tuple input) {
     admitAckTuple(input);
+    LOG.info("admitAckTuple: " + input.toString());
   }
 
   @Override
