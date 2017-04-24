@@ -34,6 +34,7 @@ public class ABSpout extends BaseRichSpout {
   private SpoutOutputCollector collector;
   private int emitted = 0;
   private boolean appendSequenceId;
+  private long taskId;
 
   public ABSpout() {
     this(false);
@@ -53,13 +54,14 @@ public class ABSpout extends BaseRichSpout {
                    TopologyContext context,
                    SpoutOutputCollector newCollector) {
     this.collector = newCollector;
+    this.taskId = context.getThisTaskId();
   }
 
   @Override
   public void nextTuple() {
     String word = TO_SEND[emitted % TO_SEND.length];
     if (appendSequenceId) {
-      word = word + "_" + emitted;
+      word = word + "_" + emitted + "_" + taskId;
     }
     collector.emit(new Values(word));
     emitted++;
