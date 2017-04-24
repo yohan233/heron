@@ -154,10 +154,11 @@ public class IntegrationTestBolt implements IRichBolt, IUpdatable {
 
     @Override
     public void ack(Tuple tuple) {
-      LOG.fine("Try to do a ack. tuplesProcessed: "
+      LOG.info("Try to do a ack. tuplesProcessed: "
           + tuplesProcessed + " ; tuplesReceived: " + tuplesReceived);
       if (tuplesProcessed < tuplesReceived) {
         delegate.ack(tuple);
+    	LOG.info("IntegrationTestBoltCollector ack " + tuple.toString());
         tuplesProcessed++;
       }
     }
