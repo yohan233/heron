@@ -215,6 +215,8 @@ public class StreamManagerClient extends HeronClient {
       StreamManager.TupleMessage msg = StreamManager.TupleMessage.newBuilder()
           .setSet(tupleSet).build();
       sendMessage(msg);
+      LOG.info(instance.getInstanceId() + "; sendAllMessage outStreamQueue: "
+               + tupleSet.toString());
     }
   }
 
@@ -229,7 +231,8 @@ public class StreamManagerClient extends HeronClient {
           gatewayMetrics.updateSentPacketsCount(1);
           gatewayMetrics.updateSentPacketsSize(tupleSet.getSerializedSize());
           sendMessage(tupleSet);
-          LOG.info(instance.getInstanceId() + " outStreamQueue: " + tupleSet.toString());
+          LOG.info(instance.getInstanceId() + "; sendStreamMessageIfNeeded outStreamQueue: "
+                   + tupleSet.toString());
         }
       }
 
