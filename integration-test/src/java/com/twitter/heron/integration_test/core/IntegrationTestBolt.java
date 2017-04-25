@@ -81,7 +81,6 @@ public class IntegrationTestBolt implements IRichBolt, IUpdatable {
 
   @Override
   public void execute(Tuple tuple) {
-    tuplesReceived++;
     String streamID = tuple.getSourceStreamId();
 
     LOG.info("Received a tuple: " + tuple + " ; from: " + streamID);
@@ -105,6 +104,7 @@ public class IntegrationTestBolt implements IRichBolt, IUpdatable {
             "Received a terminal, need to receive %s more", terminalsToReceive));
       }
     } else {
+      tuplesReceived++;
       currentTupleProcessing = tuple;
       LOG.info(this.getClass().getSimpleName() + " execute ack 1st time");
       delegateBolt.execute(tuple);
