@@ -106,8 +106,10 @@ public class IntegrationTestBolt implements IRichBolt, IUpdatable {
       }
     } else {
       currentTupleProcessing = tuple;
+      LOG.info(this.getClass().getSimpleName() + " execute ack 1st time");
       delegateBolt.execute(tuple);
       // We ack only the tuples in user's logic
+      LOG.info(this.getClass().getSimpleName() + " execute ack 2nd time");
       collector.ack(tuple);
     }
   }
@@ -157,8 +159,8 @@ public class IntegrationTestBolt implements IRichBolt, IUpdatable {
       LOG.info("Try to do a ack. tuplesProcessed: "
           + tuplesProcessed + " ; tuplesReceived: " + tuplesReceived);
       if (tuplesProcessed < tuplesReceived) {
-        delegate.ack(tuple);
         LOG.info("IntegrationTestBoltCollector ack [if] " + tuple.toString());
+        delegate.ack(tuple);
         tuplesProcessed++;
       } else {
         LOG.info("IntegrationTestBoltCollector ack [else]");

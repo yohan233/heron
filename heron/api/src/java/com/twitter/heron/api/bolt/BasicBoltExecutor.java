@@ -56,8 +56,8 @@ public class BasicBoltExecutor implements IRichBolt, IUpdatable {
     collector.setContext(input);
     try {
       bolt.execute(input, collector);
-      collector.getOutputter().ack(input);
       LOG.info("BasicBoltExecutor execute ack " + input.toString());
+      collector.getOutputter().ack(input);
     } catch (FailedException e) {
       if (e instanceof ReportedFailedException) {
         collector.reportError(e);

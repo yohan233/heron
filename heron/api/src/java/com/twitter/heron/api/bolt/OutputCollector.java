@@ -212,8 +212,8 @@ public class OutputCollector implements IOutputCollector {
 
   @Override
   public void ack(Tuple input) {
-    delegate.ack(input);
     System.out.println("OutputCollector ack " + input.toString());
+    delegate.ack(input);
   }
 
   @Override
