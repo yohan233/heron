@@ -11,7 +11,7 @@ for i in `seq 1 100`; do
   if [ $RESULT -ne 0 ]; then
     # Dump out stream manager log
     echo "DUMPING STMGR TEST LOG"
-    # tail -n +1 testlogs/heron/stmgr/tests/cpp/server/stmgr_unittest/test.log
+    tail -n +1 /home/travis/.cache/bazel/_bazel_travis/*/execroot/heron/bazel-out/local_linux-fastbuild/testlogs/heron/stmgr/tests/cpp/server/stmgr_unittest/test.log
     exit 1
   fi
 done
