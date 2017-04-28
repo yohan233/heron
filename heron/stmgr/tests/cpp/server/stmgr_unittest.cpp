@@ -705,6 +705,7 @@ TEST(StMgr, test_tuple_route) {
 
   // Wait for the bolt thread to complete receiving
   for (size_t i = 0; i < common.bolt_workers_threads_list_.size(); ++i) {
+    LOG(INFO) << "test_tuple_route join bolt_workers_threads_list_ " << i;
     common.bolt_workers_threads_list_[i]->join();
   }
 
@@ -715,12 +716,16 @@ TEST(StMgr, test_tuple_route) {
 
   // Wait for the threads to terminate. We have already waited for the bolt
   // threads
+  LOG(INFO) << "test_tuple_route join tmaster_thread_";
   common.tmaster_thread_->join();
+  LOG(INFO) << "test_tuple_route join metrics_mgr_thread_";
   common.metrics_mgr_thread_->join();
   for (size_t i = 0; i < common.stmgrs_threads_list_.size(); ++i) {
+    LOG(INFO) << "test_tuple_route join stmgrs_threads_list_ " << i;
     common.stmgrs_threads_list_[i]->join();
   }
   for (size_t i = 0; i < common.spout_workers_threads_list_.size(); ++i) {
+    LOG(INFO) << "test_tuple_route join spout_workers_threads_list_ " << i;
     common.spout_workers_threads_list_[i]->join();
   }
 
