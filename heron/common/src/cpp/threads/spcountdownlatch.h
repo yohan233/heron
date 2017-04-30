@@ -43,6 +43,9 @@ class CountDownLatch {
   // Causes the current thread to wait until the latch has counted down to zero
   void wait();
 
+  // Causes the current thread to wait until the latch has counted down to zero or timeout
+  bool waitFor(sp_uint32 seconds, sp_uint32 count = 0);
+
   // Decrements the count of the latch, releasing all waiting threads if the
   // count reaches zero
   void countDown();

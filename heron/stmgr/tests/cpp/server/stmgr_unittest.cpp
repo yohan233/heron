@@ -1359,9 +1359,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   // workers have connected
   while (!regular_stmgr->GetPhysicalPlan()) sleep(1);
   // make sure the metricsMgrTmasterLatch is the correct count before restarting tmaster
-  int trial_count = 10;  // wait 10 seconds
-  while (trial_count >= 0 && metricsMgrTmasterLatch->getCount() != 1) {trial_count--; sleep(1);}
-  CHECK_EQ(metricsMgrTmasterLatch->getCount(), 1);
+  ASSERT_TRUE(metricsMgrTmasterLatch->waitFor(10, 1));  // wait for 10 seconds
 
   // Kill current tmaster
   common.ss_list_.front()->loopExit();
@@ -1390,7 +1388,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   StartTMaster(common);
 
   // This confirms that metrics manager received the new tmaster location
-  metricsMgrTmasterLatch->wait();
+  ASSERT_TRUE(metricsMgrTmasterLatch->waitFor(10));  // wait for 10 seconds
 
   // Now wait until stmgr receives the new physical plan
   // No easy way to avoid sleep here.

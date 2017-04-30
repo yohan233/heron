@@ -29,6 +29,21 @@ void CountDownLatch::wait() {
   }
 }
 
+// if you do not use the default count=0, no notify_all() will be triggered,
+// thus you have to wait one more second (hard coded polling interval)
+bool CountDownLatch::waitFor(sp_uint32 seconds, sp_uint32 count) {
+  std::unique_lock<std::mutex> m(mutex_);
+  if (count_ == count) {
+    return true;
+  }
+  // wait until count reached or timeout.
+  while (count_ > count && seconds > 0) {
+    cond_.wait_for(m, std::chrono::seconds(1));
+    seconds--;
+  }
+  return count_ == count;
+}
+
 void CountDownLatch::countDown() {
   std::unique_lock<std::mutex> m(mutex_);
 
