@@ -1361,7 +1361,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   // make sure the metricsMgrTmasterLatch is the correct count before restarting tmaster
   int trial_count = 10; // wait 10 seconds
   while (trial_count>=0 && metricsMgrTmasterLatch->getCount() != 1) {trial_count--; sleep(1);}
-  CHECK_GE(trial_count, 0);
+  CHECK_EQ(metricsMgrTmasterLatch->getCount(), 1);
 
   // Kill current tmaster
   common.ss_list_.front()->loopExit();
