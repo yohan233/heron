@@ -475,7 +475,7 @@ sp_string StMgrServer::GetInstanceName(Connection* _connection) {
 }
 
 void StMgrServer::StartBackPressureConnectionCb(Connection* _connection) {
-  std::cerr << "StMgrServer::StartBackPressureConnectionCb" << std::endl;
+  std::cerr << "StMgrServer::StartBackPressureConnectionCb " << _connection->getPort() << "\n";
   // The connection will notify us when we can stop the back pressure
   _connection->setCausedBackPressure();
 

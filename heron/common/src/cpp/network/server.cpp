@@ -105,7 +105,7 @@ BaseConnection* Server::CreateConnection(ConnectionEndPoint* _endpoint, Connecti
   };
 
   auto backpressure_starter_ = [this](Connection* conn) {
-    std::cerr << "Server backpressure_starter_ " << std::endl;
+    std::cerr << "Server backpressure_starter_ " << conn->getPort() << std::endl;
     this->StartBackPressureConnectionCb(conn);
   };
 
@@ -120,7 +120,7 @@ void Server::HandleNewConnection_Base(BaseConnection* _connection) {
 }
 
 void Server::HandleConnectionClose_Base(BaseConnection* _connection, NetworkErrorCode _status) {
-  std::cerr << "Server::HandleConnectionClose_Base" << std::endl;
+  std::cerr << "Server::HandleConnectionClose_Base " << _connection->getPort() << std::endl;
   HandleConnectionClose(static_cast<Connection*>(_connection), _status);
 }
 

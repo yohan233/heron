@@ -1069,7 +1069,7 @@ TEST(StMgr, test_spout_death_under_backpressure) {
   TearCommonResources(common);
 }
 
-TEST(StMgr, test_back_pressure_stmgr) {
+TEST(StMgr, DISABLED_test_back_pressure_stmgr) {
   CommonResources common;
 
   // Initialize dummy params
