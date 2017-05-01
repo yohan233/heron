@@ -18,6 +18,7 @@
 // Implements the BaseServer class. See baseserver.h for details on the API
 ////////////////////////////////////////////////////////////////////////////////
 
+#include <iostream>
 #include "network/baseserver.h"
 #include "glog/logging.h"
 #include "basics/basics.h"
@@ -50,10 +51,13 @@ sp_int32 BaseServer::Start_Base() {
   listen_fd_ = socket(options_.get_socket_family(), SOCK_STREAM, 0);
   if (listen_fd_ < 0) {
     LOG(ERROR) << "Opening of a socket failed in server " << errno << "\n";
+    std::cerr << "Opening of a socket failed in server " << errno << "\n";
     return -1;
   }
 
   if (SockUtils::setSocketDefaults(listen_fd_) < 0) {
+    LOG(ERROR) << "setSocketDefaults failed in server " << errno << "\n";
+    std::cerr << "setSocketDefaults failed in server " << errno << "\n";
     close(listen_fd_);
     return -1;
   }
@@ -61,6 +65,7 @@ sp_int32 BaseServer::Start_Base() {
   // Set the socket option for addr reuse
   if (SockUtils::setReuseAddress(listen_fd_) < 0) {
     LOG(ERROR) << "setsockopt of a socket failed in server " << errno << "\n";
+    std::cerr << "setsockopt of a socket failed in server " << errno << "\n";
     close(listen_fd_);
     return -1;
   }
@@ -88,6 +93,7 @@ sp_int32 BaseServer::Start_Base() {
   // Bind to the address
   if (bind(listen_fd_, serv_addr, sockaddr_len) < 0) {
     LOG(ERROR) << "bind of a socket failed in server " << errno << "\n";
+    std::cerr << "bind of a socket failed in server " << errno << "\n";
     close(listen_fd_);
     return -1;
   }
@@ -95,6 +101,7 @@ sp_int32 BaseServer::Start_Base() {
   // Listen for new connections
   if (listen(listen_fd_, 100) < 0) {
     LOG(ERROR) << "listen of a socket failed in server " << errno << "\n";
+    std::cerr << "listen of a socket failed in server " << errno << "\n";
     close(listen_fd_);
     return -1;
   }
@@ -102,6 +109,7 @@ sp_int32 BaseServer::Start_Base() {
   // Ask the EventLoop to deliver any read events
   if (eventLoop_->registerForRead(listen_fd_, on_new_connection_callback_, true) < 0) {
     LOG(ERROR) << "register for read of the socket failed in server\n";
+    std::cerr << "register for read of the socket failed in server\n";
     close(listen_fd_);
     return -1;
   }

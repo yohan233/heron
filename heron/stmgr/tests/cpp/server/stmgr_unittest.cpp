@@ -228,7 +228,7 @@ void StartDummyStMgr(EventLoopImpl*& ss, DummyStMgr*& mgr, std::thread*& stmgr_t
 
   mgr = new DummyStMgr(ss, options, stmgr_id, LOCALHOST, stmgr_port, LOCALHOST, tmaster_port,
                        shell_port, instances);
-  mgr->Start();
+  CHECK_EQ(mgr->Start(), 0) << stmgr_port;
   stmgr_thread = new std::thread(StartServer, ss);
 }
 
@@ -245,7 +245,7 @@ void StartDummyMtrMgr(EventLoopImpl*& ss, DummyMtrMgr*& mgr, std::thread*& mtmgr
   options.set_socket_family(PF_INET);
 
   mgr = new DummyMtrMgr(ss, options, stmgr_id, tmasterLatch, connectionCloseLatch);
-  mgr->Start();
+  CHECK_EQ(mgr->Start(), 0);
   mtmgr_thread = new std::thread(StartServer, ss);
 }
 
@@ -1190,7 +1190,7 @@ TEST(StMgr, test_back_pressure_stmgr_reconnect) {
   common.tmaster_port_ = 18500;
   common.tmaster_controller_port_ = 18501;
   common.tmaster_stats_port_ = 18502;
-  common.stmgr_baseport_ = 28500;
+  common.stmgr_baseport_ = 28510;
   common.metricsmgr_port_ = 39000;
   common.shell_port_ = 49000;
   common.topology_name_ = "mytopology";
@@ -1301,7 +1301,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   common.tmaster_port_ = 18500;
   common.tmaster_controller_port_ = 18501;
   common.tmaster_stats_port_ = 18502;
-  common.stmgr_baseport_ = 28500;
+  common.stmgr_baseport_ = 28520;
   common.metricsmgr_port_ = 39001;
   common.shell_port_ = 49001;
   common.topology_name_ = "mytopology";
@@ -1318,9 +1318,6 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
-  // Start the tmaster etc.
-  StartTMaster(common);
-
   // A countdown latch to wait on, until metric mgr receives tmaster location
   // The count is 2 here, since we need to ensure it is sent twice: once at
   // start, and once after receiving new tmaster location
@@ -1328,6 +1325,10 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
 
   // Start the metrics mgr
   StartMetricsMgr(common, metricsMgrTmasterLatch, NULL);
+
+  // Start the tmaster etc.
+  StartTMaster(common);
+  CHECK_EQ(common.ss_list_.size(), 2);
 
   // Distribute workers across stmgrs
   DistributeWorkersAcrossStmgrs(common);
@@ -1362,7 +1363,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   ASSERT_TRUE(metricsMgrTmasterLatch->waitFor(10, 1));  // wait for 10 seconds
 
   // Kill current tmaster
-  common.ss_list_.front()->loopExit();
+  common.ss_list_[1]->loopExit();
   common.tmaster_thread_->join();
   delete common.tmaster_;
   delete common.tmaster_thread_;
