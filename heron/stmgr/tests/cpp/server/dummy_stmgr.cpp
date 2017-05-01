@@ -122,7 +122,8 @@ void DummyStMgr::HandleStartBackPressureMessage(Connection*,
   ++num_start_bp_;
 }
 
-void DummyStMgr::HandleStopBackPressureMessage(Connection*,
+void DummyStMgr::HandleStopBackPressureMessage(Connection* conn,
                                                heron::proto::stmgr::StopBackPressureMessage*) {
+  std::cerr << "HandleStopBackPressureMessage port " << conn->getPort();
   ++num_stop_bp_;
 }

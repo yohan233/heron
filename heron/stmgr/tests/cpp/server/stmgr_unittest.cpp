@@ -1149,6 +1149,9 @@ TEST(StMgr, test_back_pressure_stmgr) {
   // Wait till we get the back pressure notification
   while (dummy_stmgr->NumStartBPMsgs() == 0) sleep(1);
 
+  sleep(2);
+  EXPECT_EQ(dummy_stmgr->NumStopBPMsgs(), 0);
+
   // Now kill the regular stmgr2, at this point regulat stmgr 1 should send a stop bp notification
   regular_stmgr_thread2->join();
   delete regular_stmgr2;
