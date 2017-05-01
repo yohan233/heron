@@ -1136,12 +1136,19 @@ TEST(StMgr, test_back_pressure_stmgr) {
                   common.stmgr_instance_list_[2]);
   common.ss_list_.push_back(dummy_stmgr_ss);
 
+  EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
+
   // Start the dummy workers
   StartWorkerComponents(common, num_msgs_sent_by_spout_instance, num_msgs_sent_by_spout_instance);
+
+  EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Wait till we get the physical plan populated on the stmgr. That way we know the
   // workers have connected
   while (!regular_stmgr1->GetPhysicalPlan()) sleep(1);
+
+  sleep(2);
+  EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Stop regular stmgr2; at this point regular stmgr1 should send a start bp notification msg
   regular_stmgr_ss2->loopExit();
@@ -1150,7 +1157,7 @@ TEST(StMgr, test_back_pressure_stmgr) {
   while (dummy_stmgr->NumStartBPMsgs() == 0) sleep(1);
 
   sleep(2);
-  EXPECT_EQ(dummy_stmgr->NumStopBPMsgs(), 0);
+  EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Now kill the regular stmgr2, at this point regulat stmgr 1 should send a stop bp notification
   regular_stmgr_thread2->join();
@@ -1160,7 +1167,7 @@ TEST(StMgr, test_back_pressure_stmgr) {
   // Wait till we get the back pressure notification
   while (dummy_stmgr->NumStopBPMsgs() == 0) sleep(1);
 
-  EXPECT_EQ(dummy_stmgr->NumStopBPMsgs(), 1);
+  EXPECT_EQ(1, dummy_stmgr->NumStopBPMsgs());
 
   // Stop the schedulers
   for (size_t i = 0; i < common.ss_list_.size(); ++i) {
