@@ -245,7 +245,7 @@ void StartDummyMtrMgr(EventLoopImpl*& ss, DummyMtrMgr*& mgr, std::thread*& mtmgr
   options.set_socket_family(PF_INET);
 
   mgr = new DummyMtrMgr(ss, options, stmgr_id, tmasterLatch, connectionCloseLatch);
-  CHECK_EQ(mgr->Start(), 0);
+  CHECK_EQ(mgr->Start(), 0) << mtmgr_port;
   mtmgr_thread = new std::thread(StartServer, ss);
 }
 
