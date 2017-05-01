@@ -72,6 +72,7 @@ BaseConnection* Client::CreateConnection(ConnectionEndPoint* _endpoint, Connecti
   // Backpressure reliever - will point to the inheritor of this class in case the virtual function
   // is implemented in the inheritor
   auto backpressure_reliever_ = [this](Connection* conn) {
+    std::cerr << "Client backpressure_reliever_" << std::endl;
     this->StopBackPressureConnectionCb(conn);
   };
 

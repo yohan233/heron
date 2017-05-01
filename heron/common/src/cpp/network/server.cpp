@@ -100,6 +100,7 @@ BaseConnection* Server::CreateConnection(ConnectionEndPoint* _endpoint, Connecti
   // Backpressure reliever - will point to the inheritor of this class in case the virtual function
   // is implemented in the inheritor
   auto backpressure_reliever_ = [this](Connection* conn) {
+    std::cerr << "Server backpressure_reliever_ " << std::endl;
     this->StopBackPressureConnectionCb(conn);
   };
 
@@ -118,6 +119,7 @@ void Server::HandleNewConnection_Base(BaseConnection* _connection) {
 }
 
 void Server::HandleConnectionClose_Base(BaseConnection* _connection, NetworkErrorCode _status) {
+  std::cerr << "Server::HandleConnectionClose_Base" << std::endl;
   HandleConnectionClose(static_cast<Connection*>(_connection), _status);
 }
 

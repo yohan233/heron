@@ -1136,11 +1136,13 @@ TEST(StMgr, test_back_pressure_stmgr) {
                   common.stmgr_instance_list_[2]);
   common.ss_list_.push_back(dummy_stmgr_ss);
 
+  EXPECT_EQ(0, dummy_stmgr->NumStartBPMsgs());
   EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Start the dummy workers
   StartWorkerComponents(common, num_msgs_sent_by_spout_instance, num_msgs_sent_by_spout_instance);
 
+  EXPECT_EQ(0, dummy_stmgr->NumStartBPMsgs());
   EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Wait till we get the physical plan populated on the stmgr. That way we know the
@@ -1148,6 +1150,7 @@ TEST(StMgr, test_back_pressure_stmgr) {
   while (!regular_stmgr1->GetPhysicalPlan()) sleep(1);
 
   sleep(2);
+  EXPECT_EQ(0, dummy_stmgr->NumStartBPMsgs());
   EXPECT_EQ(0, dummy_stmgr->NumStopBPMsgs());
 
   // Stop regular stmgr2; at this point regular stmgr1 should send a start bp notification msg
