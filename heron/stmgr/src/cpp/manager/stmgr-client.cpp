@@ -182,6 +182,7 @@ void StMgrClient::HandleTupleStreamMessage(proto::stmgr::TupleStreamMessage2* _m
 }
 
 void StMgrClient::StartBackPressureConnectionCb(Connection* _connection) {
+  std::cerr << "StMgrClient::StartBackPressureConnectionCb" << std::endl;
   _connection->setCausedBackPressure();
   // Ask the StMgrServer to stop consuming. The client does
   // not consume anything

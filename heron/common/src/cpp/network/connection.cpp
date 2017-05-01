@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <list>
 #include <utility>
+#include <iostream>
 
 #if defined(__APPLE__)
 #include <sys/uio.h>
@@ -51,6 +52,7 @@ Connection::Connection(ConnectionEndPoint* endpoint, ConnectionOptions* options,
 
 Connection::~Connection() {
   if (hasCausedBackPressure()) {
+    std::cerr << "~Connection() mOnConnectionBufferEmpty" << std::endl;
     mOnConnectionBufferEmpty(this);
   }
   delete mIncomingPacket;
@@ -161,6 +163,7 @@ void Connection::afterWriteIntoIOVector(sp_int32 simulWrites, ssize_t numWritten
   if (hasCausedBackPressure()) {
     // Signal pipe free
     if (mNumOutstandingBytes <= mOptions->low_watermark_) {
+      std::cerr << "Connection::afterWriteIntoIOVector mOnConnectionBufferEmpty" << std::endl;
       mOnConnectionBufferEmpty(this);
     }
   }
