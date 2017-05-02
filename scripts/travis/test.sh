@@ -38,7 +38,7 @@ for i in `seq 1 100`; do
     -rh localhost -rp 8080\
     -tp integration-test/src/java/com/twitter/heron/integration_test/topology/ \
     -cl local -rl heron-staging -ev devel \
-    -ts 'IntegrationTest_MultiSpoutsMultiTasks'
+    -ts 'IntegrationTest_OneSpoutMultiTasks'
   RESULT=$?
   if [ $RESULT -ne 0 ]; then
     # Dump out stream manager log
