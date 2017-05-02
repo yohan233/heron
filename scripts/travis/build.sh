@@ -57,21 +57,21 @@ set +x
 T="heron build"
 start_timer "$T"
 python ${DIR}/save-logs.py "heron_build.txt" bazel\
-  --bazelrc=tools/travis-ci/bazel.rc build --config=ubuntu heron/...
+  --bazelrc=tools/travis-ci/bazel.rc build --config=ubuntu -c opt heron/...
 end_timer "$T"
 
 # build packages
 T="heron build tarpkgs"
 start_timer "$T"
 python ${DIR}/save-logs.py "heron_build_tarpkgs.txt" bazel\
-  --bazelrc=tools/travis-ci/bazel.rc build\
+  --bazelrc=tools/travis-ci/bazel.rc build -c opt\
   --config=ubuntu scripts/packages:tarpkgs
 end_timer "$T"
 
 T="heron build binpkgs"
 start_timer "$T"
 python ${DIR}/save-logs.py "heron_build_binpkgs.txt" bazel\
-  --bazelrc=tools/travis-ci/bazel.rc build\
+  --bazelrc=tools/travis-ci/bazel.rc build -c opt\
   --config=ubuntu scripts/packages:binpkgs
 end_timer "$T"
 
