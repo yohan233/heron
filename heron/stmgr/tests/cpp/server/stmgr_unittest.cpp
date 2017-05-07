@@ -585,6 +585,15 @@ void VerifyMetricsMgrTMaster(CommonResources& common) {
   EXPECT_EQ(common.metrics_mgr_->get_tmaster()->stats_port(), common.tmaster_stats_port_);
 }
 
+void InitializePorts(CommonResources& common) {
+  common.tmaster_port_ = IpUtils::getFreePort();
+  common.tmaster_controller_port_ = IpUtils::getFreePort();
+  common.tmaster_stats_port_ = IpUtils::getFreePort();
+  common.stmgr_baseport_ = IpUtils::getFreePort();
+  common.metricsmgr_port_ = IpUtils::getFreePort();
+  common.shell_port_ = IpUtils::getFreePort();
+}
+
 // Test to make sure that the stmgr can decode the pplan
 TEST(StMgr, test_pplan_decode) {
   CommonResources common;
@@ -607,6 +616,7 @@ TEST(StMgr, test_pplan_decode) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   sp_int8 num_workers_per_stmgr_ = (((common.num_spouts_ * common.num_spout_instances_) +
                                      (common.num_bolts_ * common.num_bolt_instances_)) /
@@ -685,6 +695,7 @@ TEST(StMgr, test_tuple_route) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   // Start the tmaster etc.
   StartTMaster(common);
@@ -763,6 +774,7 @@ TEST(StMgr, test_custom_grouping_route) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   // Start the tmaster etc.
   StartTMaster(common);
@@ -849,6 +861,7 @@ TEST(StMgr, test_back_pressure_instance) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
@@ -958,6 +971,7 @@ TEST(StMgr, test_spout_death_under_backpressure) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
@@ -1095,6 +1109,7 @@ TEST(StMgr, test_back_pressure_stmgr) {
   // Overwrite the default values for back pressure
   common.high_watermark_ = 1_MB;
   common.low_watermark_ = 500_KB;
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 500 * 1000 * 1000;  // 100M
 
@@ -1209,6 +1224,7 @@ TEST(StMgr, test_back_pressure_stmgr_reconnect) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
@@ -1321,6 +1337,7 @@ TEST(StMgr, test_tmaster_restart_on_new_address) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
@@ -1453,6 +1470,7 @@ TEST(StMgr, test_tmaster_restart_on_same_address) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
@@ -1589,6 +1607,7 @@ TEST(StMgr, test_metricsmgr_reconnect) {
   // Empty so that we don't attempt to connect to the zk
   // but instead connect to the local filesytem
   common.zkhostportlist_ = "";
+  InitializePorts(common);
 
   int num_msgs_sent_by_spout_instance = 100 * 1000 * 1000;  // 100M
 
