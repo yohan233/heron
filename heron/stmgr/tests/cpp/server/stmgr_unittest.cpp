@@ -586,12 +586,12 @@ void VerifyMetricsMgrTMaster(CommonResources& common) {
 }
 
 void InitializePorts(CommonResources& common) {
-  common.tmaster_port_ = IpUtils::getFreePort();
-  common.tmaster_controller_port_ = IpUtils::getFreePort();
-  common.tmaster_stats_port_ = IpUtils::getFreePort();
+//  common.tmaster_port_ = IpUtils::getFreePort();
+//  common.tmaster_controller_port_ = IpUtils::getFreePort();
+//  common.tmaster_stats_port_ = IpUtils::getFreePort();
   common.stmgr_baseport_ = IpUtils::getFreePort();
   common.metricsmgr_port_ = IpUtils::getFreePort();
-  common.shell_port_ = IpUtils::getFreePort();
+//  common.shell_port_ = IpUtils::getFreePort();
 }
 
 // Test to make sure that the stmgr can decode the pplan
