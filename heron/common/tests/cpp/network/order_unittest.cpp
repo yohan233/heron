@@ -121,6 +121,7 @@ void start_test(sp_int32 nclients, sp_uint64 requests) {
 
   // wait for the client threads to terminate
   for (auto& thread : cthreads) {
+    std::cout << "cthreads join " << thread << std::endl;
     thread.join();
   }
 
@@ -128,6 +129,7 @@ void start_test(sp_int32 nclients, sp_uint64 requests) {
 
   // now send a terminate message to server
   terminate_server(SERVER_PORT);
+  std::cout << "sthread join " << sthread << std::endl;
   sthread.join();
 
   ASSERT_TRUE(server_->sent_pkts() == server_->recv_pkts());
