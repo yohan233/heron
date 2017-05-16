@@ -34,7 +34,7 @@ OrderClient::OrderClient(EventLoopImpl* eventLoop, const NetworkOptions& _option
   nsent_ = nrecv_ = msgids_ = msgidr_ = 0;
 
   // Setup the call back function to be invoked when retrying
-  retry_cb_ = [this]() { this->Retry(); };
+  retry_cb_ = [this]() { std::cout<< "OrderClient:retry_cb_" << std::endl; this->Retry(); };
 }
 
 void OrderClient::CreateAndSendMessage() {
@@ -79,5 +79,5 @@ void OrderClient::SendMessages() {
   }
 
   // every ms - call send messages
-  AddTimer([this]() { this->SendMessages(); }, 1000);
+  AddTimer([this]() { std::cout<< "SendMessages" << std::endl; this->SendMessages(); }, 1000);
 }

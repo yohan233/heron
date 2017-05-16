@@ -39,7 +39,7 @@ class Terminate : public Client {
   Terminate(EventLoopImpl* eventLoop, const NetworkOptions& _options)
       : Client(eventLoop, _options) {
     // Setup the call back function to be invoked when retrying
-    retry_cb_ = [this]() { this->Retry(); };
+    retry_cb_ = [this]() { std::cout<< "Terminate:retry_cb_" << std::endl; this->Retry(); };
   }
 
   ~Terminate() {}
