@@ -23,3 +23,8 @@
 MemPool<google::protobuf::Message>* __global_protobuf_pool__ =
                                    new MemPool<google::protobuf::Message>(50 * 1024 * 1024);
 std::mutex __global_protobuf_pool_mutex__;
+
+std::unordered_map<std::string, int> __global_protobuf_pool_stat__() {
+  std::lock_guard<std::mutex> guard(__global_protobuf_pool_mutex__);
+  return __global_protobuf_pool__->stat();
+}

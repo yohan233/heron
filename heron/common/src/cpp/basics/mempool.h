@@ -70,6 +70,14 @@ class MemPool {
     }
   }
 
+  std::unordered_map<std::string, int> stat() {
+    std::unordered_map<std::string, int> stat;
+    for (auto it = mem_pool_map_.begin(); it != mem_pool_map_.end(); ++it) {
+      stat[it->first.name()] = it->second.size();
+    }
+    return stat;
+  }
+
  private:
   // each type has its own separate mem pool entry
   std::unordered_map<std::type_index, std::vector<B*>> mem_pool_map_;
@@ -92,5 +100,6 @@ void __global_protobuf_pool_release__(T* _m) {
   __global_protobuf_pool__->release(_m);
 }
 
-#endif
+std::unordered_map<std::string, int> __global_protobuf_pool_stat__();
 
+#endif
