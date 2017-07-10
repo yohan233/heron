@@ -20,6 +20,7 @@
 #include <vector>
 #include <unordered_map>
 #include <mutex>
+#include <string>
 #include <typeindex>
 #include "basics/basics.h"
 

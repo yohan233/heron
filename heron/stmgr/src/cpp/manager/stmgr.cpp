@@ -114,13 +114,18 @@ void StMgr::Init() {
 
   // Output heap stat every 1 min
   CHECK_GT(eventLoop_->registerTimer(
-               [](EventLoop::Status) {
+               [this](EventLoop::Status) {
                    char buffer[4096];
                    MallocExtension::instance()->GetStats(buffer, 4096);
                    LOG(INFO) << buffer;
                    std::unordered_map<std::string, int> stat = __global_protobuf_pool_stat__();
                    LOG(INFO) << "Dump mempool info";
                    for(auto it = stat.begin(); it != stat.end(); ++ it) {
+                     LOG(INFO) << it->first << ": " << it->second;
+                   }
+                   LOG(INFO) << "Dump tuple cache info";
+                   std::unordered_map<sp_int32, int> stat_tc = this->tuple_cache_->stat();
+                   for(auto it = stat_tc.begin(); it != stat_tc.end(); it++) {
                      LOG(INFO) << it->first << ": " << it->second;
                    }
                }, true, 60_s),

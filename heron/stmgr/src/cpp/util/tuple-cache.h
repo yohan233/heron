@@ -46,6 +46,7 @@ class TupleCache {
   void add_fail_tuple(sp_int32 _task_id, const proto::system::AckTuple& _tuple);
   void add_emit_tuple(sp_int32 _task_id, const proto::system::AckTuple& _tuple);
 
+  std::unordered_map<sp_int32, int> stat();
  private:
   void drain(EventLoop::Status);
   void drain_impl();
@@ -67,6 +68,7 @@ class TupleCache {
 
     void drain(sp_int32 _task_id,
                std::function<void(sp_int32, proto::system::HeronTupleSet2*)> _drainer);
+    int size();
 
     proto::system::HeronTupleSet2* acquire_clean_set() {
      proto::system::HeronTupleSet2* set = nullptr;

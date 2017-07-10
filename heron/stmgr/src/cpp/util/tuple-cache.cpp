@@ -56,6 +56,14 @@ sp_int64 TupleCache::add_data_tuple(sp_int32 _task_id, const proto::api::StreamI
   return l->add_data_tuple(_streamid, _tuple, &total_size_, &tuples_cache_max_tuple_size_);
 }
 
+std::unordered_map<sp_int32, int>  TupleCache::stat() {
+  std::unordered_map<sp_int32, int> stat;
+  for(auto it = cache_.begin(); it != cache_.end(); ++it) {
+    stat[it->first] = it->second->size();
+  }
+  return stat;
+}
+
 void TupleCache::add_ack_tuple(sp_int32 _task_id, const proto::system::AckTuple& _tuple) {
   if (total_size_ >= drain_threshold_bytes_) drain_impl();
   TupleList* l = get(_task_id);
@@ -200,6 +208,10 @@ void TupleCache::TupleList::drain(
     current_size_ = 0;
   }
   last_drained_count_ = drained;
+}
+
+int TupleCache::TupleList::size() {
+  return tuples_.size();
 }
 }  // namespace stmgr
 }  // namespace heron
