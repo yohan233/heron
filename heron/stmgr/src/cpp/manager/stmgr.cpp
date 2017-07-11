@@ -126,7 +126,9 @@ void StMgr::Init() {
                    LOG(INFO) << "Dump tuple cache info";
                    std::unordered_map<sp_int32, int> stat_tc = this->tuple_cache_->stat();
                    for(auto it = stat_tc.begin(); it != stat_tc.end(); it++) {
-                     LOG(INFO) << it->first << ": " << it->second;
+                     if (it -> second != 0) {
+                       LOG(INFO) << it->first << ": " << it->second;
+                     }
                    }
                }, true, 60_s),
            0);
