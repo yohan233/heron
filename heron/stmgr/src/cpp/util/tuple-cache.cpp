@@ -58,7 +58,7 @@ sp_int64 TupleCache::add_data_tuple(sp_int32 _task_id, const proto::api::StreamI
 
 std::unordered_map<sp_int32, int>  TupleCache::stat() {
   std::unordered_map<sp_int32, int> stat;
-  for(auto it = cache_.begin(); it != cache_.end(); ++it) {
+  for (auto it = cache_.begin(); it != cache_.end(); ++it) {
     stat[it->first] = it->second->size();
   }
   return stat;

@@ -47,6 +47,7 @@ class TupleCache {
   void add_emit_tuple(sp_int32 _task_id, const proto::system::AckTuple& _tuple);
 
   std::unordered_map<sp_int32, int> stat();
+
  private:
   void drain(EventLoop::Status);
   void drain_impl();

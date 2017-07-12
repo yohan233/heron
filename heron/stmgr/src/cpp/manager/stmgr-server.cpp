@@ -473,7 +473,6 @@ sp_string StMgrServer::GetInstanceName(Connection* _connection) {
 }
 
 void StMgrServer::StartBackPressureConnectionCb(Connection* _connection) {
-
   // The connection will notify us when we can stop the back pressure
   _connection->setCausedBackPressure();
 
@@ -493,11 +492,9 @@ void StMgrServer::StartBackPressureConnectionCb(Connection* _connection) {
   remote_ends_who_caused_back_pressure_.insert(instance_name);
   LOG(INFO) << "We observe back pressure on sending data to instance " << instance_name;
   StartBackPressureOnSpouts();
-
 }
 
 void StMgrServer::StopBackPressureConnectionCb(Connection* _connection) {
-
   _connection->unsetCausedBackPressure();
 
   // Find the instance this connection belongs to
@@ -518,7 +515,6 @@ void StMgrServer::StopBackPressureConnectionCb(Connection* _connection) {
   }
   LOG(INFO) << "We don't observe back pressure now on sending data to instance " << instance_name;
   AttemptStopBackPressureFromSpouts();
-
 }
 
 void StMgrServer::StartBackPressureClientCb(const sp_string& _other_stmgr_id) {

@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <list>
 #include <utility>
+#include <vector>
 
 #if defined(__APPLE__)
 #include <sys/uio.h>
@@ -31,6 +32,21 @@ const sp_int32 __SYSTEM_NETWORK_DEFAULT_WRITE_BATCH_SIZE__ = 1048576;  // 1M
 // How many times should we wait to see a buffer full while enqueueing data
 // before declaring start of back pressure
 const sp_uint8 __SYSTEM_MIN_NUM_ENQUEUES_WITH_BUFFER_FULL__ = 3;
+
+std::vector<Connection*> __global_connection__;
+
+sp_string __global_connection_stat__() {
+  std::stringstream ret;
+  ret << std::endl;
+  for (Connection* conn : __global_connection__) {
+    ret << "Connection: " << conn->getIPAddress() << ":" << conn->getPort()
+        << " => mReceivedPackets size: " << conn->mReceivedPackets.size()
+        << "; mSentPackets size: " << conn->mSentPackets.size()
+        << "; mOutstandingPackets size: " << conn->mOutstandingPackets.size()
+        << std::endl;
+  }
+  return ret.str();
+}
 
 Connection::Connection(ConnectionEndPoint* endpoint, ConnectionOptions* options,
                        EventLoop* eventLoop)
@@ -47,9 +63,18 @@ Connection::Connection(ConnectionEndPoint* endpoint, ConnectionOptions* options,
   mCausedBackPressure = false;
   mUnderBackPressure = false;
   mNumEnqueuesWithBufferFull = 0;
+
+  __global_connection__.push_back(this);
 }
 
 Connection::~Connection() {
+  for ( auto iter = __global_connection__.begin(); iter != __global_connection__.end(); ++iter ) {
+      if ( *iter == this ) {
+        __global_connection__.erase(iter);
+          break;
+      }
+  }
+
   if (hasCausedBackPressure()) {
     mOnConnectionBufferEmpty(this);
   }

@@ -120,16 +120,18 @@ void StMgr::Init() {
                    LOG(INFO) << buffer;
                    std::unordered_map<std::string, int> stat = __global_protobuf_pool_stat__();
                    LOG(INFO) << "Dump mempool info";
-                   for(auto it = stat.begin(); it != stat.end(); ++ it) {
+                   for (auto it = stat.begin(); it != stat.end(); ++it) {
                      LOG(INFO) << it->first << ": " << it->second;
                    }
                    LOG(INFO) << "Dump tuple cache info";
                    std::unordered_map<sp_int32, int> stat_tc = this->tuple_cache_->stat();
-                   for(auto it = stat_tc.begin(); it != stat_tc.end(); it++) {
+                   for (auto it = stat_tc.begin(); it != stat_tc.end(); it++) {
                      if (it -> second != 0) {
                        LOG(INFO) << it->first << ": " << it->second;
                      }
                    }
+                   LOG(INFO) << "Dump connection info";
+                   LOG(INFO) << __global_connection_stat__();
                }, true, 60_s),
            0);
 

@@ -63,6 +63,8 @@
  * events occur.
  */
 class Connection : public BaseConnection {
+  friend sp_string __global_connection_stat__();
+
  public:
   /**
    * `endpoint` is created by the caller, but now the Connection owns it.
@@ -158,5 +160,7 @@ class Connection : public BaseConnection {
   // HWM of back pressure threshold
   sp_uint8 mNumEnqueuesWithBufferFull;
 };
+
+sp_string __global_connection_stat__();
 
 #endif  // HERON_COMMON_SRC_CPP_NETWORK_CONNECTION_H_
