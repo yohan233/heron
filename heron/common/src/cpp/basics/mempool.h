@@ -22,6 +22,7 @@
 #include <mutex>
 #include <string>
 #include <typeindex>
+#include <utility>
 #include "basics/basics.h"
 
 template<typename B>
@@ -71,10 +72,15 @@ class MemPool {
     }
   }
 
-  std::unordered_map<std::string, int> stat() {
-    std::unordered_map<std::string, int> stat;
+  std::unordered_map<std::string, std::pair<int, int64_t>> stat() {
+    std::unordered_map<std::string, std::pair<int, int64_t>> stat;
     for (auto it = mem_pool_map_.begin(); it != mem_pool_map_.end(); ++it) {
-      stat[it->first.name()] = it->second.size();
+      int64_t bytes_used = 0;
+      for (int i = 0; i < it->second.size(); i++) {
+        bytes_used += it->second[i]->SpaceUsed();
+      }
+      std::pair<int, int64_t> nums_and_bytes = std::make_pair(it->second.size(), bytes_used);
+      stat[it->first.name()] = nums_and_bytes;
     }
     return stat;
   }
@@ -101,6 +107,6 @@ void __global_protobuf_pool_release__(T* _m) {
   __global_protobuf_pool__->release(_m);
 }
 
-std::unordered_map<std::string, int> __global_protobuf_pool_stat__();
+std::unordered_map<std::string, std::pair<int, int64_t>> __global_protobuf_pool_stat__();
 
 #endif
