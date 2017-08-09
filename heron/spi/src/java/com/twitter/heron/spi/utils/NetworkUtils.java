@@ -223,6 +223,58 @@ public final class NetworkUtils {
     return sendHttpResponse(true, exchange, response);
   }
 
+
+
+
+  /**
+   * Send Http PUT Request to a connection with given data in request body
+   *
+   * @param connection the connection to send post request to
+   * @param contentType the type of the content to be sent
+   * @param data the data to send in post request body
+   * @return true if success
+   */
+  public static boolean sendHttpPutRequest(HttpURLConnection connection,
+                                           String contentType,
+                                           byte[] data) {
+
+    try {
+      connection.setRequestMethod("PUT");
+    } catch (ProtocolException e) {
+      LOG.log(Level.SEVERE, "Failed to set put request: ", e);
+      return false;
+    }
+
+    if (data.length > 0) {
+      connection.setRequestProperty(CONTENT_TYPE, contentType);
+      connection.setRequestProperty(CONTENT_LENGTH, Integer.toString(data.length));
+
+      connection.setUseCaches(false);
+      connection.setDoOutput(true);
+
+      OutputStream os = null;
+      try {
+        os = connection.getOutputStream();
+        os.write(data);
+        os.flush();
+      } catch (IOException e) {
+        LOG.log(Level.SEVERE, "Failed to send request: ", e);
+        return false;
+      } finally {
+        try {
+          if (os != null) {
+            os.close();
+          }
+        } catch (IOException e) {
+          LOG.log(Level.SEVERE, "Failed to close OutputStream: ", e);
+          return false;
+        }
+      }
+    }
+    return true;
+
+  }
+
   /**
    * Send Http POST Request to a connection with given data in request body
    *

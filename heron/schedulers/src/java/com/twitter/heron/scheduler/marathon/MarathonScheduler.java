@@ -93,7 +93,7 @@ public class MarathonScheduler implements IScheduler {
 
   @Override
   public boolean onKill(Scheduler.KillTopologyRequest request) {
-    return controller.killTopology();
+    return controller.suspendTopology() && controller.killTopology();
   }
 
   @Override
